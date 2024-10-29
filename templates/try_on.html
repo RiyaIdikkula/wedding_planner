@@ -1,0 +1,144 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Swap with Dress</title>
+    <script type="module" src="{% static 'js/face-api.js' %}"></script>
+    <script type="module" src="{% static 'js/index.js' %}"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f9f9f9;
+            margin: 0;
+        }
+        /* Header Styling */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 { margin-bottom: 20px; }
+        img { max-width: 100%; }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            margin-top: 20px;
+            text-align: center;
+            width: fit-content;
+        }
+        .button:hover { background-color: #0056b3; }
+        canvas { border: 1px solid #ccc; margin-top: 20px; }
+        .back-button { margin-top: 10px; }
+        .uploaded-image-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        {% include 'headercustomer.html' %}
+    </header>
+    <h1>Try On This Dress</h1>
+
+    <div class="dress-image-container">
+        <img id="dressImage" src="{{ dressImage }}" alt="Selected Dress" style="max-width: 100%;" />
+    </div>
+
+    <div class="user-image-container">
+        <img id="userImage" alt="Uploaded User Image" style="max-width: 100%; display: none;" />
+    </div>
+
+    <input type="file" id="fileInput" accept="image/*" onchange="handleFileUpload(event)">
+
+    <div class="uploaded-image-container">
+        <h2>Uploaded Image</h2>
+        <img id="uploadedImage" alt="Uploaded User Image" style="max-width: 100%; display: none;" />
+    </div>
+
+    <div class="button" id="capture">Capture Image</div>
+    <div class="button back-button" onclick="goBack()">Back</div>
+    
+    <canvas id="canvas" width="300" height="400"></canvas>
+
+    <script>
+        import * as faceapi from 'face-api.js';
+
+        const userImageElement = document.getElementById('userImage');
+        const dressImageElement = document.getElementById('dressImage');
+        const uploadedImageElement = document.getElementById('uploadedImage');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await Promise.all([
+                faceapi.nets.ssdMobilenetv1.loadFromUri('/models'),
+                faceapi.nets.faceLandmark68Net.loadFromUri('/models')
+            ]);
+            console.log("Models Loaded!");
+
+            document.getElementById('capture').addEventListener('click', detectFacesAndSwap);
+        });
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    userImageElement.src = e.target.result;
+                    uploadedImageElement.src = e.target.result; // Set uploaded image
+                    userImageElement.style.display = 'block';
+                    uploadedImageElement.style.display = 'block'; // Show uploaded image
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function detectFacesAndSwap() {
+            const userDetection = await faceapi.detectSingleFace(userImageElement).withFaceLandmarks();
+            if (!userDetection) {
+                alert("No face detected in the uploaded image.");
+                return;
+            }
+
+            const dressDetection = await faceapi.detectSingleFace(dressImageElement).withFaceLandmarks();
+            if (!dressDetection) {
+                alert("No face detected in the dress image.");
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(dressImageElement, 0, 0, canvas.width, canvas.height);
+            drawSwappedFace(userDetection.landmarks, dressDetection.landmarks);
+        }
+
+        function drawSwappedFace(userLandmarks, dressLandmarks) {
+            ctx.save();
+            ctx.globalAlpha = 0.5;
+            // Implement face swapping logic here
+            ctx.drawImage(userImageElement, 0, 0, canvas.width, canvas.height);
+            ctx.restore();
+        }
+
+        function goBack() {
+            window.history.back(); // Go back to the previous page
+        }
+    </script>
+</body>
+</html>

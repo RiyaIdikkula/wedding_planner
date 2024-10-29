@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Wedding Information</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="{% static 'js/admin.js' %}" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa; /* Light background color for contrast */
+        }
+        
+        .form-container {
+            max-width: 600px; /* Limit the width of the form container */
+            margin: 30px auto; /* Center the form */
+            padding: 20px;
+            border-radius: 10px; /* Rounded corners for a softer look */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+            background-color: white; /* White background for the form */
+        }
+        
+        h2 {
+            text-align: center; /* Center the heading */
+            color: #333; /* Darker color for better readability */
+        }
+        
+        label {
+            display: block; /* Block display for labels to have full width */
+            margin-top: 15px; /* Space above labels */
+            color: #555; /* Slightly lighter dark for labels */
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%; /* Full width inputs */
+            padding: 10px; /* Padding for comfort */
+            margin-top: 5px; /* Space between label and input */
+            border: 1px solid #ccc; /* Border color */
+            border-radius: 5px; /* Rounded corners */
+            box-sizing: border-box; /* Includes padding in width calculation */
+        }
+        
+        input[type="text"][readonly],
+        input[type="hidden"] {
+            background-color: #f0f0f0; /* Light grey background for readonly fields */
+        }
+        
+        .error {
+            color: red; /* Red color for error messages */
+            display: none; /* Hidden by default */
+            font-size: 0.9em; /* Smaller font size for error messages */
+        }
+        
+        button {
+            width: 100%; /* Full width button */
+            padding: 12px; /* Padding for button */
+            margin-top: 20px; /* Space above button */
+            border: none; /* No border */
+            border-radius: 5px; /* Rounded corners */
+            background-color: #4CAF50; /* Green background for the button */
+            color: white; /* White text color */
+            font-size: 16px; /* Larger font size */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s; /* Transition effect for hover */
+        }
+        
+        button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+        
+        .result-container {
+            margin-top: 20px; /* Space above result container */
+            padding: 10px; /* Padding for result container */
+            background-color: #f9f9f9; /* Light background for result container */
+            border-radius: 5px; /* Rounded corners */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for result container */
+        }
+        
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 15px; /* Reduced padding on smaller screens */
+            }
+        
+            h2 {
+                font-size: 24px; /* Slightly smaller heading on smaller screens */
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    {% include 'headercustomer.html' %}
+    <div class="form-container">
+        <h2>Wedding Information</h2>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <form method="POST" id="checkoutForm" action="{% url 'predict_budget' %}">
+            {% csrf_token %}
+            <label for="customerName">Your Name:</label>
+            <input type="text" id="customerName" name="customerName" value="{{ user.username }}" readonly>
+            <p id="error1" class="error">Name must be alphabets only</p>
+
+            <label for="brideName">Bride's Name:</label>
+            <input type="text" id="brideName" name="brideName" required>
+            <p id="brideName-error" class="error">Name must be alphabets only</p>
+
+            <label for="groomName">Groom's Name:</label>
+            <input type="text" id="groomName" name="groomName" required>
+            <p id="groomName-error" class="error">Name must be alphabets only</p>
+
+            <label for="guestCount">Total Number of Guests:</label>
+            <input type="number" id="guestCount" name="guestCount" min="1" required>
+            <p id="guestCount-error" class="error">Please enter a valid number of guests.</p>
+
+            <label for="weddingDates">Wedding Dates:</label>
+            <input type="text" id="weddingDates" name="weddingDates" required>
+            <p id="weddingDates-error" class="error">Please select a valid date.</p>
+
+            <label for="address">Wedding Venue Address:</label>
+            <textarea id="address" name="address" placeholder="Enter the address of the wedding venue" required></textarea>
+
+            <label for="package_display">Selected Package:</label>
+            {% if selected_package %}
+                <input type="text" id="package_display" value="{{ selected_package.name }} - ${{ selected_package.price }}" readonly>
+                <input type="hidden" name="package_id" value="{{ selected_package.package_id }}">
+                <input type="hidden" id="package_price" value="{{ selected_package.price }}">
+            {% else %}
+                <input type="text" id="package_display" value="No package selected" readonly>
+            {% endif %}
+            <button type="submit" id="calculateBudgetBtn">Calculate Budget</button>
+
+            <label for="Amount">Total Amount to Payment : <span id="order-total">$0.00</span></label>
+
+            <div class="result-container">
+                <h2>Estimated Additional Budget with Guest Count: <span id="result"></span></h2>
+                <h2>Total Cost (Package + Estimated Budget): <span id="total-cost"></span></h2>
+            </div>
+            <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+            <button type="button" id="placeOrderBtn">Place an Order</button>
+        </form>
+    </div>
+
+    <!-- Razorpay script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script>
+        // Date picker setup
+        flatpickr('#weddingDates', {
+            mode: 'range',
+            dateFormat: 'Y-m-d',
+            minDate: 'today',
+            altInput: true,
+            altFormat: 'F j, Y'
+        });
+
+        // Calculate total cost function
+        function calculateBudget() {
+            const guestCount = parseInt(document.getElementById('guestCount').value);
+            const packagePrice = parseFloat(document.getElementById('package_price').value) || 0; // Ensure this is defined
+            const additionalBudget = guestCount * 50; // $50 per guest (example logic)
+
+            document.getElementById('result').textContent = '$' + additionalBudget.toFixed(2);
+            const totalCost = packagePrice + additionalBudget;
+            document.getElementById('total-cost').textContent = '$' + totalCost.toFixed(2);
+
+            // Calculate half of the total cost
+            const halfTotalCost = totalCost / 2;
+            document.getElementById('order-total').textContent = '$' + halfTotalCost.toFixed(2); // Display half of the total cost
+        }
+
+        document.getElementById('calculateBudgetBtn').onclick = function(e) {
+            e.preventDefault();
+            calculateBudget();
+        };
+
+        document.getElementById('placeOrderBtn').onclick = function(e) {
+            e.preventDefault();
+            // Perform validation before processing payment
+            const errors = [];
+            if (parseInt(document.getElementById('guestCount').value) < 1) {
+                errors.push('Please enter a valid number of guests.');
+                document.getElementById('guestCount-error').style.display = 'block';
+            } else {
+                document.getElementById('guestCount-error').style.display = 'none';
+            }
+
+            if (errors.length > 0) {
+                return; // Stop if there are errors
+            }
+
+            var totalAmount = parseFloat(document.getElementById('order-total').textContent.replace('$', '')) * 100;
+
+            var options = {
+                "key": "rzp_test_kuS91ojzsMscI2", // Your Razorpay Key ID
+                "amount": totalAmount,
+                "currency": "INR",
+                "name": "Wedding Planner",
+                "description": "Package Payment",
+                "image": "{% static 'images/logo.png' %}",
+                "handler": function (response) {
+                    alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+                    document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id; // Set the payment ID
+                    var form = document.getElementById('checkoutForm');
+                    form.submit(); // Submit the form with payment ID
+                },
+                "prefill": {
+                    "name": "{{ user.username }}",
+                    "email": "{{ user.email }}",
+                },
+                "theme": {
+                    "color": "#4CAF50"
+                }
+            };
+
+            var rzp = new Razorpay(options);
+            rzp.open();
+        };
+
+        $(document).ready(function () {
+            // Define patterns for validation
+            var namePattern = /^[a-zA-Z\s]*$/;
+
+            // Validate bride's name
+            $("#brideName").keyup(function () {
+                var name = $(this).val();
+                if (!namePattern.test(name)) {
+                    $("#brideName-error").show();
+                } else {
+                    $("#brideName-error").hide();
+                }
+            });
+
+            // Validate groom's name
+            $("#groomName").keyup(function () {
+                var name = $(this).val();
+                if (!namePattern.test(name)) {
+                    $("#groomName-error").show();
+                } else {
+                    $("#groomName-error").hide();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

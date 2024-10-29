@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/additional-methods.min.js"></script> {% endcomment %}
+</head>
+<style>
+    /* Reset and Base Styles */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Roboto', Arial, sans-serif;
+        background-color: #f0f0f0;
+        background-image: url("{% static 'img/img.webp' %}"); /* Replace with your image URL */
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding-top: 40px; /* Adjust padding to reduce form length from top */
+    }
+
+    /* Container Styles */
+    .container {
+        max-width: 350px;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+        padding: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    /* Header Styles */
+    header {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    header h1 {
+        font-size: 20px;
+        margin-bottom: 5px;
+        color: #333333;
+    }
+
+    header p {
+        color: #666666;
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    /* Form Styles */
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+        color: #333333;
+        font-size: 12px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #dddddd;
+        border-radius: 4px;
+        font-size: 12px;
+        transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    input[type="password"]:focus {
+        border-color: #007bff;
+    }
+
+    button {
+        width: 100%;
+        padding: 8px;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        color: #ffffff;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    .login-message {
+        text-align: center;
+        color: #666666;
+        font-size: 12px;
+        margin-top: 8px; /* Add some space above */
+    }
+
+    .login-message a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .login-message a:hover {
+        text-decoration: underline;
+    }
+
+    /* Footer Styles */
+    footer {
+        text-align: center;
+        margin-top: 10px;
+        color: #666666;
+    }
+
+    footer p {
+        font-size: 12px;
+    }
+
+    /* Messages Styles */
+    .messages {
+        margin-bottom: 15px;
+        padding: 0;
+        list-style: none;
+    }
+
+    .messages li {
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 5px;
+    }
+
+    .messages .red-error {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    p.error {
+        display: none;
+        font-family: cursive;
+        font-size: 12px;
+        color: red;
+        margin: 5px 0;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        var namePattern = /^[a-zA-Z\s]*$/;
+        var emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        var phonePattern = /^[6-9]\d{9}$/;
+        var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8}$/;
+
+        $("#name").keyup(function () {
+            var name = $(this).val();
+            if (!namePattern.test(name)) {
+                $("#error1").show();
+            } else {
+                $("#error1").hide();
+            }
+        });
+
+        $("#email").keyup(function () {
+            var email = $(this).val();
+            if (!emailPattern.test(email)) {
+                $("#error2").show();
+            } else {
+                $("#error2").hide();
+            }
+        });
+
+        $("#phone").keyup(function () {
+            var phone = $(this).val();
+            if (!phonePattern.test(phone)) {
+                $("#error3").show();
+            } else {
+                $("#error3").hide();
+            }
+        });
+
+        $("#password").keyup(function () {
+            var password = $(this).val();
+            if (!passwordPattern.test(password)) {
+                $("#error4").show();
+            } else {
+                $("#error4").hide();
+            }
+        });
+
+        $("#registerForm").on("submit", function (e) {
+            if ($("#error1").is(":visible") || $("#error2").is(":visible") || $("#error3").is(":visible") || $("#error4").is(":visible")) {
+                alert('Please fill the form correctly!');
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Based Wedding Planner</h1>
+            <p>Create your account</p>
+        </header>
+       
+        <form id="registerForm" method="post" action="{% url 'register' %}">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="username" name="username" required>
+                <p id="error1" class="error">Name must be alphabets only</p>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                <p id="error2" class="error">Email must be valid</p>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" name="phone" required>
+                <p id="error3" class="error">Phone number must contain 10 digits only</p>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" maxlength="8" required>
+                <p id="error4" class="error" style="display:none;"><b style='font-family:cursive;font-size:12px;color:red;'>Password must be exactly 8 characters long and include at least one uppercase letter, one lowercase letter, and one digit</b></p>
+            </div>
+            <button type="submit" id="submit" class="submit">Register</button>
+        </form>
+      
+        <p class="login-message">If you have already registered, please <a href="{% url 'login' %}">login</a>.</p>
+        
+        <footer>
+            <p>&copy; 2024 AI Based Wedding Planner. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

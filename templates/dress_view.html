@@ -1,0 +1,177 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Courses</title>
+    <style>
+        :root {
+            --primary-color: #34495e;
+            --secondary-color: #3498db;
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+            --border-radius: 8px;
+        }
+
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #fff5f0;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            padding-top: 120px; /* Space for fixed header */
+        }
+
+        /* Header Styling */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Main Container */
+        .family-session-container {
+            max-width: 800px;
+            margin: 60px auto;
+            text-align: center;
+            padding: 30px;
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Headings */
+        .family-session-container h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: #1B2B03;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        /* Dress Card Styles */
+        .dress-card {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            padding: 15px;
+        }
+
+        .dress-card h5 {
+            color: #290774;
+            margin-bottom: 10px;
+        }
+
+        .dress-card p {
+            margin: 10px 0;
+        }
+
+        /* Button Styles */
+        .try-on-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .try-on-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Image Styles */
+        .dress-images img {
+            max-width: 100%;
+            border-radius: var(--border-radius);
+        }
+
+        /* Back Button */
+        .back-button-container {
+            position: fixed;
+            top: 100px;
+            left: 40px;
+            z-index: 1000;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            color: var(--secondary-color);
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: 2px solid var(--secondary-color);
+        }
+
+        .back-button:hover {
+            background-color: var(--secondary-color);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dress-card {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        {% include 'headercustomer.html' %}
+    </header>
+
+    <header>
+        {% include 'headercustomer.html' %}
+    </header>
+
+    <div class="back-button-container">
+        <a href="javascript:history.back()" class="back-button"> Back</a>
+    </div>
+
+    <div class="family-session-container">
+        <h1>Dresses</h1>
+        {% for dress in dresses %}
+            <div class="dress-card">
+                <h5 class="card-title">{{ dress.name }}</h5>
+                <p class="card-text">{{ dress.description }}</p>
+                <p><strong>Package:</strong> {{ dress.package.name }}</p>
+                <div class="dress-images">
+                    {% for image in dress.images.all %}
+                        <img src="{{ image.image.url }}" alt="{{ dress.name }}" class="img-fluid dress-image" />
+                    {% endfor %}
+                </div>
+
+                <!-- Link to Try On Page passing the first image URL -->
+                <a href="{% url 'try_on' dress_id=dress.id %}">Try On</a>
+                </a>
+            </div>
+        {% empty %}
+            <p>No dresses available.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

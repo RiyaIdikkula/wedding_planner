@@ -1,0 +1,57 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Detection</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+    <script defer src="{% static 'js/index.js' %}"></script>
+    <style>
+        #video {
+            width: 720px;
+            height: 560px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Face Detection using face-api.js</h1>
+    
+    <video id="video" width="720" height="560" autoplay muted></video>
+    <img id="overlayImage" src="/static/images/glasses.png" style="display:none;">
+    <script>
+        // Initialize the video stream
+        async function startVideo() {
+            const video = document.getElementById('video');
+            const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+            video.srcObject = stream;
+        }
+
+        // Load the models and start video stream
+        async function loadModels() {
+            await faceapi.nets.tinyFaceDetector.loadFromUri('/static/models');
+            await faceapi.nets.faceLandmark68Net.loadFromUri('/static/models');
+            await faceapi.nets.faceRecognitionNet.loadFromUri('/static/models');
+            startVideo();
+        }
+
+        // Detect faces when the video is playing
+        document.getElementById('video').addEventListener('play', async () => {
+            const video = document.getElementById('video');
+            const displaySize = { width: video.width, height: video.height };
+            faceapi.matchDimensions(video, displaySize);
+
+            setInterval(async () => {
+                const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
+                // You can draw the detections on the canvas or do something with the results
+                console.log(detections);
+            }, 100);
+        });
+
+        // Start the app
+        loadModels();
+    </script>
+</body>
+</html>

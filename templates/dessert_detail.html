@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desserts</title>
+    <style>
+        :root {
+            --primary-color: #34495e;
+            --secondary-color: #3498db;
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+            --border-radius: 8px;
+        }
+        /* Header styling */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #fff5f0;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            padding-top: 120px;
+        }
+    
+        /* Main container styling */
+        .family-session-container {
+            max-width: 800px;
+            margin: 60px auto;
+            text-align: center;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        /* Headings and paragraphs styling */
+        .family-session-container h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: #1B2B03;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .family-session-container p {
+            font-size: 18px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+    
+        /* Session details section */
+        .session-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            font-family: 'Roboto', sans-serif;
+            color: #1B2B03;
+        }
+    
+        /* Session info styling */
+        .session-info {
+            flex: 1;
+            text-align: left;
+            padding-right: 20px;
+            max-width: 300px;
+        }
+    
+        .session-info h2 {
+            font-size: 24px;
+            color: #290774;
+            margin-bottom: 10px;
+        }
+    
+        .session-info p {
+            margin: 10px 0;
+            color: #290774;
+        }
+    
+        .price {
+            font-size: 24px;
+            color: #5bd098;
+            margin-top: 20px;
+        }
+    
+        /* Button styling */
+        .book-now {
+            background-color: #ff7a8a;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    
+        .book-now:hover {
+            background-color: #e06676;
+        }
+    
+        /* Image slider styling */
+        .image-slider {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            margin: auto;
+        }
+    
+        .image-slider img {
+            width: 100%;
+            display: none;
+            transition: opacity 1s ease-in-out;
+        }
+    
+        .image-slider img.active {
+            display: block;
+            opacity: 1;
+        }
+    
+        .next-btn {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 200px; /* Increased width */
+        }
+        
+        .next-btn:hover {
+            background-color: #2980b9;
+        }
+    
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            .session-details {
+                flex-direction: column;
+            }
+    
+            .session-info {
+                padding-right: 0;
+                max-width: 100%;
+                text-align: center;
+            }
+    
+            .image-slider {
+                max-width: 100%;
+                height: auto;
+            }
+    
+            .next-btn {
+                position: static;
+                margin-top: 10px;
+            }
+        }
+    
+        /* Back button styling */
+        .back-button-container {
+            position: fixed;
+            top: 100px;
+            left: 40px;
+            z-index: 1000;
+        }
+    
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            color: #3498db;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: 2px solid #3498db;
+        }
+    
+        .back-button:hover {
+            background-color: #3498db;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+    
+        .back-button::before {
+            content: '←';
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .next-btn-container {
+            text-align: center;
+            margin-top: 40px;
+            margin-bottom: 40px; /* Reduced margin for better bottom placement */
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        
+        
+        .next-btn {
+            background-color: #3498db;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 200px;
+            transition: background-color 0.3s ease;
+            margin-bottom: -1100px;
+        }
+        
+        .next-btn:hover {
+            background-color: #2980b9;
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: #1B2B03;
+            margin-bottom: 20px;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        {% include 'headercustomer.html' %}
+    </header>
+    <div class="back-button-container">
+        <a href="javascript:history.back()" class="back-button">&larr; Back</a>
+    </div>
+    {% for dessert in desserts %}
+    <div class="family-session-container">
+       
+        <h1>{{ dessert.name }}</h1>
+        <p>{{ dessert.description }}</p>
+        <div class="session-details">
+            <div class="session-info">
+                <h2>{{ dessert.name }}</h2>
+                <p><strong>{{ dessert.description }}</strong></p>
+                
+            </div>
+            <div class="image-slider" data-dessert-id="{{ dessert.dessert_id }}">
+                {% for image in dessert.images.all %}
+                    <img src="{{ image.image.url }}" alt="{{ dessert.name }}" class="slider-image {% if forloop.first %}active{% endif %}">
+                {% endfor %}
+                <a href="{% url 'dessert_detail' item_id=dessert.dessert_id %}" class="btn btn-secondary">See More</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Next Button outside the family-session-container -->
+    <div class="btn-container">
+        <a href="{% url 'checkout' %}?package_id={{ package.package_id }}" class="btn btn-primary" style="margin-left: 1085px;background-color:blue;color:white;">Proceed to Checkout</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sliders = document.querySelectorAll('.image-slider');
+            const nextBtn = document.querySelector('.next-btn');
+            
+            sliders.forEach(slider => {
+                const images = slider.querySelectorAll('.slider-image');
+                let currentImageIndex = 0;
+    
+                function showNextImage() {
+                    images[currentImageIndex].classList.remove('active');
+                    currentImageIndex = (currentImageIndex + 1) % images.length;
+                    images[currentImageIndex].classList.add('active');
+                }
+    
+                // Automatically change image every 5 seconds
+                setInterval(showNextImage, 5000);
+            });
+    
+            // Handle Next button click
+            // Handle Next button click
+           nextBtn.addEventListener('click', function() {
+        const packageId = this.getAttribute('data-package-id');
+    window.location.href = `/checkout/?package_id=${packageId}`; // Redirect to checkout page
+           });
+        });
+    </script>
+</body>
+</html>

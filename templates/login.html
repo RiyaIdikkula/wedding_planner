@@ -1,0 +1,228 @@
+{% load static %}
+{% load socialaccount %}
+{% providers_media_js %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f0f0f0;
+            background-image: url("{% static 'img/img.webp' %}"); /* Replace with your image URL */
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding-top: 40px; /* Adjust padding to reduce form length from top */
+        }
+
+        /* Container Styles */
+        .container {
+            max-width: 350px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+            padding: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Header Styles */
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        header h1 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: #333333;
+        }
+
+        header p {
+            color: #666666;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        /* Form Styles */
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            color: #333333;
+            font-size: 12px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #dddddd;
+            border-radius: 4px;
+            font-size: 12px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #007bff;
+        }
+
+        button {
+            width: 100%;
+            padding: 8px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px; /* Add margin to separate buttons */
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .forgot-password,
+        .signin-google {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .forgot-password:hover,
+        .signin-google:hover {
+            text-decoration: underline;
+        }
+
+        .login-message {
+            text-align: center;
+            color: #666666;
+            font-size: 12px;
+            margin-top: 8px; /* Add some space above */
+        }
+
+        .login-message a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .login-message a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer Styles */
+        footer {
+            text-align: center;
+            margin-top: 10px;
+            color: #666666;
+        }
+
+        footer p {
+            font-size: 12px;
+        }
+
+        /* Error Messages */
+        .error {
+            color: red;
+            font-size: 12px;
+            display: none; /* Hide errors initially */
+        }
+        
+        
+        .google-button:hover {
+            background-color: #c1351d;
+        }
+       
+    </style>
+    {% comment %} <script>
+        $(document).ready(function () {
+            var emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{5}$/;
+        
+            $("#email").keyup(function () {
+                var email = $(this).val();
+                if (!emailPattern.test(email)) {
+                    $("#error2").show();
+                } else {
+                    $("#error2").hide();
+                }
+            });
+        
+            $("#password").keyup(function () {
+                var password = $(this).val();
+                if (!passwordPattern.test(password)) {
+                    $("#error4").show();
+                } else {
+                    $("#error4").hide();
+                }
+            });
+        
+            $("#loginform").on("submit", function (e) {
+                if ($("#error2").is(":visible") || $("#error4").is(":visible")) {
+                    alert('Please fill the form correctly!');
+                    e.preventDefault(); // Prevent form submission
+                }
+            });
+        });
+        
+    </script> {% endcomment %}
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Based Wedding Planner</h1>
+            <p>Login to your account</p>
+        </header>
+        <form id="loginform" method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                {% comment %} <p id="error2" class="error">Email must be valid</p> {% endcomment %}
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password"  required>
+                {% comment %} <p id="error4" class="error"><b>Password must be exactly 5 characters long and include at least one uppercase letter, one lowercase letter, and one digit</b></p> {% endcomment %}
+            </div>
+            <button id="submit" type="submit">Login</button>
+            <a href="{% url 'password_reset_form' %}" class="forgot-password">Forgot Password?</a>
+            
+            <a href="{% provider_login_url 'google' %}" class="signin-google">Continue with Google</a>
+        </form>
+        <p class="login-message">If you have already registered, please <a href="{% url 'register' %}">Register</a>.</p>
+        <footer>
+            <p>&copy; 2024 AI Based Wedding Planner. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

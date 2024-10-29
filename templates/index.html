@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>WoodCrest</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="{% static 'libs/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/nivo-slider/css/nivo-slider.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/nivo-slider/css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/nivo-slider/css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reponsive.css' %}">
+</head>
+<body>
+    {% include 'headercustomer.html' %}
+    <!-- Slideshow Section -->
+    <div class="section banner">
+        <div class="tiva-slideshow-wrapper">
+            <div id="tiva-slideshow" class="nivoSlider">
+                <a href="#">
+                    <img class="img-responsive" src="{% static 'img/slider-01.jpg' %}" title="#caption1" alt="Slideshow image">
+                </a>
+                <a href="#">
+                    <img class="img-responsive" src="{% static 'img/slider-02.jpg' %}" title="#caption2" alt="Slideshow image">
+                </a>
+                <a href="#">
+                    <img class="img-responsive" src="{% static 'img/slider-03.jpg' %}" title="#caption3" alt="Slideshow image">
+                </a>
+            </div>
+            <!-- Captions -->
+            <div id="caption1" class="nivo-html-caption">
+                <h2>Slide 1 Caption</h2>
+            </div>
+            <div id="caption2" class="nivo-html-caption">
+                <h2>Slide 2 Caption</h2>
+            </div>
+            <div id="caption3" class="nivo-html-caption">
+                <h2>Slide 3 Caption</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vendor JS -->
+    <script src="{% static 'libs/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'libs/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'libs/nivo-slider/js/jquery.nivo.slider.js' %}"></script>
+    <script src="{% static 'js/theme.js' %}"></script>
+    <!-- Initialize NivoSlider -->
+    <script>
+        $(window).on('load', function() {
+            $('#tiva-slideshow').nivoSlider();
+        });
+    </script>
+</body>
+</html>
