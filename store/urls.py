@@ -113,7 +113,7 @@ urlpatterns = [
     path('package/<int:package_id>/event/', views.event_package, name='event_details'), 
     
     path('booking/', views.booking_view, name='booking'),
-    path('add-to-booking/', views.add_to_booking, name='add_to_booking'),
+    # path('add-to-booking/', views.add_to_booking, name='add_to_booking'),
     path('checkout/', views.checkout_view, name='checkout'), 
     
     # path('wedding-info/',views.wedding_info_view, name='wedding_info'),
@@ -121,44 +121,15 @@ urlpatterns = [
     
     path('booking/', views.booking_view, name='booking_page'),
     
-  
+    path('add-dress/', views.upload_dress, name='add_dress'),
+    path('view-dresses/', views.dress_list, name='view_dresses'),
     
-    path('upload_dress/', views.upload_dress, name='upload_dress'),
-    path('dresses/', views.dress_list, name='dress_list'),
-    path('try_on/<int:dress_id>/', views.virtual_try_on, name='virtual_try_on'),
+    path('dresses/try_on/', views.dress_view, name='dress_view'),  # This lists all dresses
+    path('try_on/<int:dress_id>/', views.try_on, name='try_on'),
     
-    path('photographer/', views.photographer, name='photographers'),
-    path('stylist/', views.stylist, name='stylists'),
-    path('event/', views.event, name='events'),
-    
-   
-   
-    path('export_weddinginfo/', views.export_weddinginfo_csv, name='export_weddinginfo'),  # Add this line
-    path('export_packages/', views.export_package_csv, name='export_packages'),  # Add this path
-    # path('predict/', views.predict_budget, name='predict_budget'),  # Add this line
+    path('face-detection/', views.face_detection_view, name='face_detection'), 
+    path('predict/', views.predict_budget, name='predict_budget'),  # Add this line
 
-    path('order-details/', views.order_details_view, name='order_details'),  # Add this line
-
-    # path('stylist/<int:stylist_id>/', views.stylist_detail_view, name='stylist_detail'),
-    path('event/<int:event_id>/', views.event_detail_view, name='event_detail'),
-     path('photographer/<int:photographer_id>/', views.photographer_detail_view, name='photographer_detail'),
-    # path('preferences/', views.preferences_view, name='preferences_view'),
-
-    path('checkouts/', views.checkout_details_view, name='checkout_details'),
-    
-    path('customer-page/', views.customer_page, name='customer_page'),
-    
-    path('feedback/', views.submit_emoji_feedback, name='submit_feedback'),
-    path('thank-you/', views.feedback_thankyou_view, name='feedback_thankyou'),
-    
-    path('complaint/', views.complaint, name='submit_complaint'),
-    path('complaints_thankyou/', views.complaint_view, name='complaints'),
-    
-    path('feedback_list/', views.feedback_list, name='feedback_list'),
-    path('complaint_list/', views.complaint_list, name='complaint_list'),
-    
-    
-    path('stylist/<int:stylist_id>/', views.stylist_index_view, name='stylist_index'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
