@@ -123,6 +123,13 @@ def logout_view(request):
     logout(request)
     return redirect('index')
 
+
+from django.http import JsonResponse
+
+def predict_budget(request):
+    return JsonResponse({'message': 'Budget prediction feature under development'})
+
+
 # View customers
 @login_required
 def view_customers(request):
