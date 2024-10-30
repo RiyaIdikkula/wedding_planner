@@ -188,24 +188,101 @@ class WeddingInfo(models.Model):
     wedding_dates = models.CharField(max_length=255)  # Store as a comma-separated string
     venue_address = models.TextField()
     package = models.ForeignKey(Package, on_delete=models.SET_NULL, null=True, blank=True)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # New field for total amount
+    razorpay_payment_id = models.CharField(max_length=255, null=True, blank=True) 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Wedding of {self.bride_name} and {self.groom_name}"
-    
+
 class Dress(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=255)
     description = models.TextField()
-    package = models.ForeignKey(Package, on_delete=models.CASCADE)  # Link to Package
 
     def __str__(self):
         return self.name
 
-
 class DressImage(models.Model):
     dress = models.ForeignKey(Dress, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='dress_images/')
+    image = models.ImageField(upload_to='dresses/')
 
     def __str__(self):
-        return f"Image for {self.dress.name}"
+        return f"{self.dress.name} - Image"
 
+
+# class UserImage(models.Model):
+#     user_image = models.ImageField(upload_to='user_images/')
+#     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+# class DressImage(models.Model):
+#     dress_name = models.CharField(max_length=255, default='Default Dress Name')  # Example of dress_name
+#     dress_image = models.ImageField(upload_to='dress_images/', default='path/to/default/image.jpg')  # Set a default image path
+#     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+
+class FoodImage(models.Model):
+    image = models.ImageField(upload_to='food_images/')
+    predicted_food = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return self.predicted_food or "Unknown Food"
+
+from django.db import models
+
+class UserPreferences(models.Model):
+    BUDGET_CHOICES = [
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High')
+    ]
+    VENUE_CHOICES = [
+        ('indoor', 'Indoor'),
+        ('outdoor', 'Outdoor'),
+        ('destination', 'Destination')
+    ]
+    SEASON_CHOICES = [
+        ('spring', 'Spring'),
+        ('summer', 'Summer'),
+        ('fall', 'Fall'),
+        ('winter', 'Winter')
+    ]
+    
+    budget = models.CharField(max_length=10, choices=BUDGET_CHOICES)
+    guest_count = models.PositiveIntegerField()
+    venue_type = models.CharField(max_length=20, choices=VENUE_CHOICES)
+    preferred_colors = models.CharField(max_length=100)
+    season = models.CharField(max_length=10, choices=SEASON_CHOICES)
+    
+    def __str__(self):
+        return f"{self.budget} budget wedding in {self.season}"
+
+from django import forms
+from .models import UserPreferences
+
+class PreferencesForm(forms.ModelForm):
+    class Meta:
+        model = UserPreferences
+        fields = ['budget', 'guest_count', 'venue_type', 'preferred_colors', 'season']
+        widgets = {
+            'budget': forms.Select(attrs={'class': 'form-control'}),
+            'guest_count': forms.NumberInput(attrs={'class': 'form-control'}),
+            'venue_type': forms.Select(attrs={'class': 'form-control'}),
+            'preferred_colors': forms.TextInput(attrs={'class': 'form-control'}),
+            'season': forms.Select(attrs={'class': 'form-control'}),
+        }
+        
+class Feedback(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)  # Assuming User model for customers
+    suggestion = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feedback from {self.customer.username}"
+    
+class Complaint(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)  # Assuming User model for customers
+    suggestion = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Complaint from {self.customer.username}"
